@@ -39,6 +39,7 @@ HX711 scale;
 HX711 scale2;
 HX711 scale3;
 HX711 scale4;
+float calibration_factor = 103.7; //hesaplanan kalibrasyon böleni
 
 //variables for loadcell values
 float load;     //asıl ağırlığımızı tuttuğumuz kısım
@@ -104,10 +105,10 @@ void setup()
   scale3.begin(DOUT3, CLK);
   scale4.begin(DOUT4, CLK);
 
-  scale.set_scale(165.78); // Kalibrasyon böleni her hücre için farklı olabilir bu nedenle tek tek hesaplanacak
-  scale2.set_scale(164.6);
-  scale3.set_scale(164.2);
-  scale4.set_scale(162.16);
+  scale.set_scale(calibration_factor);
+  scale2.set_scale(calibration_factor);
+  scale3.set_scale(calibration_factor);
+  scale4.set_scale(calibration_factor);
   tare(); // tüm hücrelerin darasını alan metod
 
   lcd.begin();                          // lcd ekran başlatılıyor
@@ -133,4 +134,23 @@ void loop()
   {
     tempLoad = load;
   }
+  /* Kalibrasyon için ayrı blok
+  scale.set_scale(calibration_factor);
+  scale2.set_scale(calibration_factor);
+  scale3.set_scale(calibration_factor);
+  scale4.set_scale(calibration_factor);
+
+  Serial.println(scale.get_units(5) + scale2.get_units(5) + scale3.get_units(5) + scale4.get_units(5));
+  Serial.print(" calibration_factor: ");
+  Serial.println(calibration_factor);
+
+  if (Serial.available()) // okunan değer takip edilerek + - ile optimum değer bulunarak en tepedeki değişken güncellenecek
+  {
+    char temp = Serial.read();
+    if (temp == '+' || temp == 'a')
+      calibration_factor += 0.1;
+    else if (temp == '-' || temp == 'z')
+      calibration_factor -= 0.1;
+  }
+  */
 }
